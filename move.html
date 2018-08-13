@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        #box{background: red;width: 100px;height: 100px;position: absolute;top: 200px;left: 10px;}
+    </style>
+</head>
+<body>
+<div id="box"></div>
+<script>
+
+    function getStyle(boxName,nameSt){
+        if(boxName.currentStyle){
+            return boxName.currentStyle[nameSt]
+        }else{
+            return getComputedStyle(boxName,false)[nameSt]
+        }
+    }
+    function run(changeSt,nameBox,cur){
+        changeSt == 'opacity' ? nameBox.style[changeSt] = cur : nameBox.style[changeSt] = cur + 'px';
+    }
+    function move(obj,fn) {//运动盒名,运动元素,终止条件,改变力度,运动时间
+        var t   = null;
+        var nameBox = document.getElementById(obj.nameBox);
+
+        var cur = obj.changeSt == 'opacity' ?  parseFloat(getStyle(nameBox,obj.changeSt)) :  parseInt(getStyle(nameBox,obj.changeSt));
+
+        t = setInterval(function () {
+            cur = cur < obj.endSt ? cur += obj.changeWh : cur -= obj.changeWh;
+            //console.log(cur);
+            if(cur == obj.endSt){
+                cur = obj.endSt;
+                run(obj.changeSt,nameBox,cur);
+                clearInterval(t);
+                fn && fn();
+                return;
+            }
+            run(obj.changeSt,nameBox,cur);
+        },obj.runTime);
+    }
+
+    move(
+        {
+            nameBox:'box',
+            changeSt:'top',
+            endSt:0,
+            runTime:20,
+            changeWh:1
+        },
+        function () {
+            move(
+                {
+                    nameBox:'box',
+                    changeSt:'left',
+                    endSt:200,
+                    runTime:20,
+                    changeWh:1
+                }
+            )
+        }
+    );
+</script>
+</body>
+</html>
